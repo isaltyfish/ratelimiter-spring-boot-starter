@@ -10,12 +10,14 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter implements ApplicationContextAware {
 
     private final RedisRateLimiter redisRateLimiter;
     private final RedisRateLimiterProperties config;
     private final BeanHolder<KeyResolver> keyResolverHolder;
+    private final MethodSignatureCache sigCache;
     private ApplicationContext applicationContext;
 
     public RateLimiterHandlerInterceptor(RedisRateLimiter redisRateLimiter,
@@ -23,6 +25,7 @@ public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter imp
         this.redisRateLimiter = redisRateLimiter;
         this.config = config;
         this.keyResolverHolder = new BeanHolder<>();
+        this.sigCache = new MethodSignatureCache();
     }
 
     @Override
@@ -32,7 +35,7 @@ public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter imp
             HandlerMethod m = (HandlerMethod) handler;
             RateLimit rateLimit = m.getMethodAnnotation(RateLimit.class);
             if (rateLimit != null) {
-                return handlerScopedLimit(request, response, rateLimit, defaultResolver);
+                return handlerScopedLimit(request, response, rateLimit, defaultResolver, m.getMethod());
             }
 
             if (this.config.isGlobal()) {
@@ -50,7 +53,8 @@ public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter imp
     private boolean handlerScopedLimit(HttpServletRequest request,
                                        HttpServletResponse response,
                                        RateLimit rateLimit,
-                                       KeyResolver defaultResolver) throws IOException {
+                                       KeyResolver defaultResolver,
+                                       Method method) throws IOException {
         RedisRateLimiterProperties p = new RedisRateLimiterProperties();
         p.setReplenishRate(rateLimit.replenishRate());
         p.setBurstCapacity(rateLimit.burstCapacity());
@@ -63,7 +67,9 @@ public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter imp
         if (resolver instanceof EmptyResolver) {
             return false;
         }
-        if (!this.redisRateLimiter.isAllowed(resolver.resolve(request), p)) {
+        String sig = sigCache.getSig(method);
+        String id = resolver.resolve(request) + "@" + sig;
+        if (!this.redisRateLimiter.isAllowed(id, p)) {
             renderString(response, "you are rate limited");
             return false;
         }
