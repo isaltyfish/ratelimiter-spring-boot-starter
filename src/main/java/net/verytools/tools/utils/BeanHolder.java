@@ -1,4 +1,4 @@
-package net.verytools.tools;
+package net.verytools.tools.utils;
 
 import org.springframework.context.ApplicationContext;
 

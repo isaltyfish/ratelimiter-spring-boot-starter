@@ -1,4 +1,4 @@
-package net.verytools.tools;
+package net.verytools.tools.utils;
 
 import java.lang.reflect.Method;
 import java.util.Map;

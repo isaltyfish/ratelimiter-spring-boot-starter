@@ -1,6 +1,8 @@
 package net.verytools.tools.interceptors;
 
 import net.verytools.tools.*;
+import net.verytools.tools.utils.BeanHolder;
+import net.verytools.tools.utils.MethodSignatureCache;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -17,21 +19,23 @@ public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter imp
     private final RedisRateLimiter redisRateLimiter;
     private final RedisRateLimiterProperties config;
     private final BeanHolder<KeyResolver> keyResolverHolder;
+    private final BeanHolder<RateLimitResponseHandler> rateLimitRespHandlerHolder;
     private final MethodSignatureCache sigCache;
-    private ApplicationContext applicationContext;
+    private ApplicationContext ctx;
 
     public RateLimiterHandlerInterceptor(RedisRateLimiter redisRateLimiter,
                                          RedisRateLimiterProperties config) {
         this.redisRateLimiter = redisRateLimiter;
         this.config = config;
         this.keyResolverHolder = new BeanHolder<>();
+        this.rateLimitRespHandlerHolder = new BeanHolder<>();
         this.sigCache = new MethodSignatureCache();
     }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (handler instanceof HandlerMethod) {
-            KeyResolver defaultResolver = keyResolverHolder.get(KeyResolver.class, applicationContext);
+            KeyResolver defaultResolver = keyResolverHolder.get(KeyResolver.class, ctx);
             HandlerMethod m = (HandlerMethod) handler;
             RateLimit rateLimit = m.getMethodAnnotation(RateLimit.class);
             if (rateLimit != null) {
@@ -41,7 +45,8 @@ public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter imp
             if (this.config.isGlobal()) {
                 if (!(defaultResolver instanceof EmptyResolver)
                         && !this.redisRateLimiter.isAllowed(defaultResolver.resolve(request), this.config)) {
-                    renderString(response, "you are rate limited");
+                    RateLimitResponseHandler rateLimitRespHandler = rateLimitRespHandlerHolder.get(RateLimitResponseHandler.class, ctx);
+                    rateLimitRespHandler.handle(response);
                     return false;
                 }
             }
@@ -62,7 +67,7 @@ public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter imp
         Class<? extends KeyResolver> resolverClazz = rateLimit.resolver();
         KeyResolver resolver = defaultResolver;
         if (resolverClazz != EmptyResolver.class) {
-            resolver = this.applicationContext.getBean(resolverClazz);
+            resolver = this.ctx.getBean(resolverClazz);
         }
         if (resolver instanceof EmptyResolver) {
             return false;
@@ -70,7 +75,8 @@ public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter imp
         String sig = sigCache.getSig(method);
         String id = resolver.resolve(request) + "@" + sig;
         if (!this.redisRateLimiter.isAllowed(id, p)) {
-            renderString(response, "you are rate limited");
+            RateLimitResponseHandler rateLimitRespHandler = rateLimitRespHandlerHolder.get(RateLimitResponseHandler.class, ctx);
+            rateLimitRespHandler.handle(response);
             return false;
         }
         return true;
@@ -85,6 +91,6 @@ public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter imp
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+        this.ctx = applicationContext;
     }
 }

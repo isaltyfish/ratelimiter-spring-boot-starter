@@ -28,4 +28,10 @@ public class RateLimiterConfiguration {
                                                                        RedisRateLimiterProperties properties) {
         return new RateLimiterHandlerInterceptor(redisRateLimiter, properties);
     }
+
+    @ConditionalOnMissingBean(RateLimitResponseHandler.class)
+    @Bean
+    public RateLimitResponseHandler rateLimitResponseHandler() {
+        return new DefaultRateLimitResponseHandler();
+    }
 }
