@@ -1,0 +1,36 @@
+{
+  "groups": [
+    {
+      "name": "rate-limiter",
+      "type": "net.verytools.tools.RedisRateLimiterProperties",
+      "sourceType": "net.verytools.tools.RedisRateLimiterProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "rate-limiter.burst-capacity",
+      "type": "java.lang.Integer",
+      "sourceType": "net.verytools.tools.RedisRateLimiterProperties",
+      "defaultValue": 1
+    },
+    {
+      "name": "rate-limiter.global",
+      "type": "java.lang.Boolean",
+      "sourceType": "net.verytools.tools.RedisRateLimiterProperties",
+      "defaultValue": false
+    },
+    {
+      "name": "rate-limiter.replenish-rate",
+      "type": "java.lang.Integer",
+      "sourceType": "net.verytools.tools.RedisRateLimiterProperties",
+      "defaultValue": 0
+    },
+    {
+      "name": "rate-limiter.requested-tokens",
+      "type": "java.lang.Integer",
+      "sourceType": "net.verytools.tools.RedisRateLimiterProperties",
+      "defaultValue": 1
+    }
+  ],
+  "hints": []
+}
