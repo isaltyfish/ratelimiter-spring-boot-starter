@@ -82,13 +82,6 @@ public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter imp
         return true;
     }
 
-    public static void renderString(HttpServletResponse response, String string) throws IOException {
-        response.setStatus(200);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("utf-8");
-        response.getWriter().print(string);
-    }
-
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.ctx = applicationContext;
