@@ -1,6 +1,6 @@
 package net.verytools.tools;
 
-public class RedisRateLimiterRule {
+public class RateLimitRule {
 
     private int replenishRate;
 

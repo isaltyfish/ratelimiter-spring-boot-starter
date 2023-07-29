@@ -7,11 +7,11 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "rate-limiter")
 public class RedisRateLimiterProperties {
 
-    private String window;
+    private String window = "1s";
 
-    private int windowTokens;
+    private int windowTokens = 1;
 
-    private int burstCapacity = 1;
+    private int burstCapacity = 10;
 
     private int requestedTokens = 1;
 

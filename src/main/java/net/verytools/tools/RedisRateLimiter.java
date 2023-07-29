@@ -27,13 +27,13 @@ public class RedisRateLimiter {
     }
 
     @SuppressWarnings("unchecked")
-    public boolean isAllowed(String id, RedisRateLimiterRule p) {
+    public boolean isAllowed(String id, RateLimitRule rule) {
         // How many requests per second do you want a user to be allowed to do?
-        int replenishRate = p.getReplenishRate();
+        int replenishRate = rule.getReplenishRate();
         // How much bursting do you want to allow?
-        int burstCapacity = p.getBurstCapacity();
+        int burstCapacity = rule.getBurstCapacity();
         // How many tokens are requested per request?
-        int requestedTokens = p.getRequestedTokens();
+        int requestedTokens = rule.getRequestedTokens();
 
         try {
             List<String> keys = getKeys(id);

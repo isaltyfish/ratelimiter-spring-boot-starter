@@ -18,18 +18,20 @@ import java.lang.reflect.Method;
 public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter implements ApplicationContextAware {
 
     private final RedisRateLimiter redisRateLimiter;
-    private final RedisRateLimiterRule config;
+    private final RateLimitRule config;
     private final BeanHolder<KeyResolver> keyResolverHolder;
+    private final BeanHolder<PathPatternRateLimitRuleConfig> patternBeanHolder;
     private final BeanHolder<RateLimitResponseHandler> rateLimitRespHandlerHolder;
     private final MethodSignatureCache sigCache;
     private ApplicationContext ctx;
 
     public RateLimiterHandlerInterceptor(RedisRateLimiter redisRateLimiter,
-                                         RedisRateLimiterRule config) {
+                                         RateLimitRule config) {
         this.redisRateLimiter = redisRateLimiter;
         this.config = config;
         this.keyResolverHolder = new BeanHolder<>();
         this.rateLimitRespHandlerHolder = new BeanHolder<>();
+        this.patternBeanHolder = new BeanHolder<>();
         this.sigCache = new MethodSignatureCache();
     }
 
@@ -43,9 +45,15 @@ public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter imp
                 return handlerScopedLimit(request, response, rateLimit, defaultResolver, m.getMethod());
             }
 
-            if (this.config.isGlobal()) {
+            // handle rate limit for prefixed path
+            RateLimitRule rule = null;
+            PathPatternRateLimitRuleConfig patternConfig = patternBeanHolder.get(PathPatternRateLimitRuleConfig.class, ctx);
+            if (patternConfig != null) {
+                rule = patternConfig.matchRule(request.getRequestURI());
+            }
+            if (rule != null || this.config.isGlobal()) {
                 if (!(defaultResolver instanceof EmptyResolver)
-                        && !this.redisRateLimiter.isAllowed(defaultResolver.resolve(request), this.config)) {
+                        && !this.redisRateLimiter.isAllowed(defaultResolver.resolve(request), rule == null ? this.config : rule)) {
                     RateLimitResponseHandler rateLimitRespHandler = rateLimitRespHandlerHolder.get(RateLimitResponseHandler.class, ctx);
                     rateLimitRespHandler.handle(response);
                     return false;

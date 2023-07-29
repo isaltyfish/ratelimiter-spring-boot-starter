@@ -13,7 +13,7 @@ public @interface RateLimit {
 
     int windowTokens() default 1;
 
-    int burstCapacity() default 1;
+    int burstCapacity() default 10;
 
     int requestedTokens() default 1;
 
