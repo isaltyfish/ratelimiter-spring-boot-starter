@@ -61,11 +61,6 @@ public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter imp
                                        RateLimit rateLimit,
                                        KeyResolver defaultResolver,
                                        Method method) throws IOException {
-        RedisRateLimiterProperties p = new RedisRateLimiterProperties();
-        p.setWindow(rateLimit.window());
-        p.setWindowTokens(rateLimit.windowTokens());
-        p.setBurstCapacity(rateLimit.burstCapacity());
-        p.setRequestedTokens(rateLimit.requestedTokens());
         Class<? extends KeyResolver> resolverClazz = rateLimit.resolver();
         KeyResolver resolver = defaultResolver;
         if (resolverClazz != EmptyResolver.class) {
@@ -76,7 +71,7 @@ public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter imp
         }
         String sig = sigCache.getSig(method);
         String id = resolver.resolve(request) + "@" + sig;
-        if (!this.redisRateLimiter.isAllowed(id, RateLimitRuleUtil.asRateLimitRule(p))) {
+        if (!this.redisRateLimiter.isAllowed(id, RateLimitRuleUtil.asRateLimitRule(rateLimit))) {
             RateLimitResponseHandler rateLimitRespHandler = rateLimitRespHandlerHolder.get(RateLimitResponseHandler.class, ctx);
             rateLimitRespHandler.handle(response);
             return false;
