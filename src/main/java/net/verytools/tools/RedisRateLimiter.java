@@ -27,7 +27,7 @@ public class RedisRateLimiter {
     }
 
     @SuppressWarnings("unchecked")
-    public boolean isAllowed(String id, RedisRateLimiterProperties p) {
+    public boolean isAllowed(String id, RedisRateLimiterRule p) {
         // How many requests per second do you want a user to be allowed to do?
         int replenishRate = p.getReplenishRate();
         // How much bursting do you want to allow?

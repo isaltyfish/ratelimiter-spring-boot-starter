@@ -1,6 +1,7 @@
 package net.verytools.tools;
 
 import net.verytools.tools.interceptors.RateLimiterHandlerInterceptor;
+import net.verytools.tools.utils.RateLimitRuleUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +27,7 @@ public class RateLimiterConfiguration {
     @Bean
     public RateLimiterHandlerInterceptor rateLimiterHandlerInterceptor(RedisRateLimiter redisRateLimiter,
                                                                        RedisRateLimiterProperties properties) {
-        return new RateLimiterHandlerInterceptor(redisRateLimiter, properties);
+        return new RateLimiterHandlerInterceptor(redisRateLimiter, RateLimitRuleUtil.asRateLimitRule(properties));
     }
 
     @ConditionalOnMissingBean(RateLimitResponseHandler.class)

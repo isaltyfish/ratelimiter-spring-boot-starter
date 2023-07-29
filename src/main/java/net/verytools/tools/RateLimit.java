@@ -9,7 +9,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RateLimit {
 
-    int replenishRate() default 1;
+    String window() default "1s";
+
+    int windowTokens() default 1;
 
     int burstCapacity() default 1;
 

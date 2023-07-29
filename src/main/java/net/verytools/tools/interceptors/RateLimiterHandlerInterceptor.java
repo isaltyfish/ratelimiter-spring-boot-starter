@@ -3,6 +3,7 @@ package net.verytools.tools.interceptors;
 import net.verytools.tools.*;
 import net.verytools.tools.utils.BeanHolder;
 import net.verytools.tools.utils.MethodSignatureCache;
+import net.verytools.tools.utils.RateLimitRuleUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -17,14 +18,14 @@ import java.lang.reflect.Method;
 public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter implements ApplicationContextAware {
 
     private final RedisRateLimiter redisRateLimiter;
-    private final RedisRateLimiterProperties config;
+    private final RedisRateLimiterRule config;
     private final BeanHolder<KeyResolver> keyResolverHolder;
     private final BeanHolder<RateLimitResponseHandler> rateLimitRespHandlerHolder;
     private final MethodSignatureCache sigCache;
     private ApplicationContext ctx;
 
     public RateLimiterHandlerInterceptor(RedisRateLimiter redisRateLimiter,
-                                         RedisRateLimiterProperties config) {
+                                         RedisRateLimiterRule config) {
         this.redisRateLimiter = redisRateLimiter;
         this.config = config;
         this.keyResolverHolder = new BeanHolder<>();
@@ -61,7 +62,8 @@ public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter imp
                                        KeyResolver defaultResolver,
                                        Method method) throws IOException {
         RedisRateLimiterProperties p = new RedisRateLimiterProperties();
-        p.setReplenishRate(rateLimit.replenishRate());
+        p.setWindow(rateLimit.window());
+        p.setWindowTokens(rateLimit.windowTokens());
         p.setBurstCapacity(rateLimit.burstCapacity());
         p.setRequestedTokens(rateLimit.requestedTokens());
         Class<? extends KeyResolver> resolverClazz = rateLimit.resolver();
@@ -74,7 +76,7 @@ public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter imp
         }
         String sig = sigCache.getSig(method);
         String id = resolver.resolve(request) + "@" + sig;
-        if (!this.redisRateLimiter.isAllowed(id, p)) {
+        if (!this.redisRateLimiter.isAllowed(id, RateLimitRuleUtil.asRateLimitRule(p))) {
             RateLimitResponseHandler rateLimitRespHandler = rateLimitRespHandlerHolder.get(RateLimitResponseHandler.class, ctx);
             rateLimitRespHandler.handle(response);
             return false;

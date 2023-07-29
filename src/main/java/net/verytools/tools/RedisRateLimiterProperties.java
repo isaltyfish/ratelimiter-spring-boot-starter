@@ -7,7 +7,9 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "rate-limiter")
 public class RedisRateLimiterProperties {
 
-    private int replenishRate;
+    private String window;
+
+    private int windowTokens;
 
     private int burstCapacity = 1;
 
@@ -15,12 +17,20 @@ public class RedisRateLimiterProperties {
 
     private boolean global = false;
 
-    public int getReplenishRate() {
-        return replenishRate;
+    public String getWindow() {
+        return window;
     }
 
-    public void setReplenishRate(int replenishRate) {
-        this.replenishRate = replenishRate;
+    public void setWindow(String window) {
+        this.window = window;
+    }
+
+    public int getWindowTokens() {
+        return windowTokens;
+    }
+
+    public void setWindowTokens(int windowTokens) {
+        this.windowTokens = windowTokens;
     }
 
     public int getBurstCapacity() {
