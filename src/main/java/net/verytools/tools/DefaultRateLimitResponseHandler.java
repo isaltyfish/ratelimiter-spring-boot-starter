@@ -6,7 +6,7 @@ import java.io.IOException;
 public class DefaultRateLimitResponseHandler implements RateLimitResponseHandler {
     @Override
     public void handle(HttpServletResponse response) throws IOException {
-        renderString(response, "Rate Limit exceeded");
+        renderString(response, "Too Many Requests");
     }
 
     public static void renderString(HttpServletResponse response, String string) throws IOException {
