@@ -23,6 +23,7 @@ public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter imp
     private final BeanHolder<PathPatternRateLimitRuleConfig> patternBeanHolder;
     private final BeanHolder<RateLimitResponseHandler> rateLimitRespHandlerHolder;
     private final MethodSignatureCache sigCache;
+    private boolean global;
     private ApplicationContext ctx;
 
     public RateLimiterHandlerInterceptor(RedisRateLimiter redisRateLimiter,
@@ -51,7 +52,7 @@ public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter imp
             if (patternConfig != null) {
                 rule = patternConfig.matchRule(request.getRequestURI());
             }
-            if (rule != null || this.config.isGlobal()) {
+            if (rule != null || global) {
                 if (!(defaultResolver instanceof EmptyResolver)
                         && !this.redisRateLimiter.isAllowed(defaultResolver.resolve(request), rule == null ? this.config : rule)) {
                     RateLimitResponseHandler rateLimitRespHandler = rateLimitRespHandlerHolder.get(RateLimitResponseHandler.class, ctx);
@@ -90,5 +91,9 @@ public class RateLimiterHandlerInterceptor extends HandlerInterceptorAdapter imp
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.ctx = applicationContext;
+    }
+
+    public void setGlobal(boolean global) {
+        this.global = global;
     }
 }

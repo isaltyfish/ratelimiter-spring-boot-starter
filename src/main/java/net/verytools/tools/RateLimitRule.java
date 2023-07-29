@@ -8,8 +8,6 @@ public class RateLimitRule {
 
     private int requestedTokens;
 
-    private boolean global = false;
-
     public int getReplenishRate() {
         return replenishRate;
     }
@@ -32,13 +30,5 @@ public class RateLimitRule {
 
     public void setRequestedTokens(int requestedTokens) {
         this.requestedTokens = requestedTokens;
-    }
-
-    public boolean isGlobal() {
-        return global;
-    }
-
-    public void setGlobal(boolean global) {
-        this.global = global;
     }
 }

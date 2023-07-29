@@ -11,7 +11,7 @@ public class RateLimitRuleUtil {
 
     static final Pattern windowPattern = Pattern.compile("^\\d+[sSmMhH]$");
 
-    public static RateLimitRule asRateLimitRule(RedisRateLimiterProperties config) {
+    public static RateLimitRule asRateLimitRule(RedisRateLimiterProperties.Config config) {
         RateLimitRule ret = new RateLimitRule();
         String window = config.getWindow();
         if (!windowPattern.matcher(window).matches()) {
@@ -22,17 +22,16 @@ public class RateLimitRuleUtil {
         ret.setReplenishRate(config.getWindowTokens());
         ret.setBurstCapacity(config.getBurstCapacity() * seconds);
         ret.setRequestedTokens(config.getRequestedTokens() * seconds);
-        ret.setGlobal(config.isGlobal());
         return ret;
     }
 
     public static RateLimitRule asRateLimitRule(RateLimit rateLimit) {
-        RedisRateLimiterProperties p = new RedisRateLimiterProperties();
-        p.setWindow(rateLimit.window());
-        p.setWindowTokens(rateLimit.windowTokens());
-        p.setBurstCapacity(rateLimit.burstCapacity());
-        p.setRequestedTokens(rateLimit.requestedTokens());
-        return asRateLimitRule(p);
+        RedisRateLimiterProperties.Config config = new RedisRateLimiterProperties.Config();
+        config.setWindow(rateLimit.window());
+        config.setWindowTokens(rateLimit.windowTokens());
+        config.setBurstCapacity(rateLimit.burstCapacity());
+        config.setRequestedTokens(rateLimit.requestedTokens());
+        return asRateLimitRule(config);
     }
 
 }

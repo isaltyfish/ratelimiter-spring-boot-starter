@@ -38,11 +38,10 @@ public class PathPatternRateLimitRuleConfig {
 
     private final List<PathPatternRateLimitRule> rules = new ArrayList<>();
 
-    public PathPatternRateLimitRuleConfig rule(RedisRateLimiterProperties config, String... pathPatterns) {
+    public PathPatternRateLimitRuleConfig rule(RedisRateLimiterProperties.Config config, String... pathPatterns) {
         if (pathPatterns != null) {
             PathPatternRateLimitRule r = new PathPatternRateLimitRule();
             RateLimitRule rateLimitRule = RateLimitRuleUtil.asRateLimitRule(config);
-            rateLimitRule.setGlobal(false);
             r.setRule(rateLimitRule);
             r.setPathPatterns(Arrays.asList(pathPatterns));
             rules.add(r);

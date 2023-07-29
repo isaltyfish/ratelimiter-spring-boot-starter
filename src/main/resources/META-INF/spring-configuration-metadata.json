@@ -4,13 +4,37 @@
       "name": "rate-limiter",
       "type": "net.verytools.tools.RedisRateLimiterProperties",
       "sourceType": "net.verytools.tools.RedisRateLimiterProperties"
+    },
+    {
+      "name": "rate-limiter.config",
+      "type": "net.verytools.tools.RedisRateLimiterProperties$Config",
+      "sourceType": "net.verytools.tools.RedisRateLimiterProperties",
+      "sourceMethod": "getConfig()"
     }
   ],
   "properties": [
     {
-      "name": "rate-limiter.burst-capacity",
+      "name": "rate-limiter.config.burst-capacity",
       "type": "java.lang.Integer",
-      "sourceType": "net.verytools.tools.RedisRateLimiterProperties",
+      "sourceType": "net.verytools.tools.RedisRateLimiterProperties$Config",
+      "defaultValue": 10
+    },
+    {
+      "name": "rate-limiter.config.requested-tokens",
+      "type": "java.lang.Integer",
+      "sourceType": "net.verytools.tools.RedisRateLimiterProperties$Config",
+      "defaultValue": 1
+    },
+    {
+      "name": "rate-limiter.config.window",
+      "type": "java.lang.String",
+      "sourceType": "net.verytools.tools.RedisRateLimiterProperties$Config",
+      "defaultValue": "1s"
+    },
+    {
+      "name": "rate-limiter.config.window-tokens",
+      "type": "java.lang.Integer",
+      "sourceType": "net.verytools.tools.RedisRateLimiterProperties$Config",
       "defaultValue": 1
     },
     {
@@ -18,18 +42,6 @@
       "type": "java.lang.Boolean",
       "sourceType": "net.verytools.tools.RedisRateLimiterProperties",
       "defaultValue": false
-    },
-    {
-      "name": "rate-limiter.replenish-rate",
-      "type": "java.lang.Integer",
-      "sourceType": "net.verytools.tools.RedisRateLimiterProperties",
-      "defaultValue": 0
-    },
-    {
-      "name": "rate-limiter.requested-tokens",
-      "type": "java.lang.Integer",
-      "sourceType": "net.verytools.tools.RedisRateLimiterProperties",
-      "defaultValue": 1
     }
   ],
   "hints": []
