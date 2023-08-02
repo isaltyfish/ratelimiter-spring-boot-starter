@@ -6,7 +6,7 @@
 
     <groupId>net.verytools.tools</groupId>
     <artifactId>ratelimiter-spring-boot-starter</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <name>ratelimiter-spring-boot-starter</name>
     <description>rate limiter spring boot starter</description>
     <url>https://github.com/isaltyfish/ratelimiter-spring-boot-starter</url>
@@ -35,7 +35,7 @@
         <connection>scm:git:git@github.com:isaltyfish/ratelimiter-spring-boot-starter.git</connection>
         <developerConnection>scm:git:git@github.com:isaltyfish/ratelimiter-spring-boot-starter.git</developerConnection>
         <url>git@github.com:isaltyfish/ratelimiter-spring-boot-starter.git</url>
-        <tag>v1.1.0</tag>
+        <tag>v1.1.1</tag>
     </scm>
 
     <distributionManagement>

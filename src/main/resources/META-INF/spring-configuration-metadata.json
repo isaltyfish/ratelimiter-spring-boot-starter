@@ -36,12 +36,6 @@
       "type": "java.lang.Integer",
       "sourceType": "net.verytools.tools.RedisRateLimiterProperties$Config",
       "defaultValue": 1
-    },
-    {
-      "name": "rate-limiter.global",
-      "type": "java.lang.Boolean",
-      "sourceType": "net.verytools.tools.RedisRateLimiterProperties",
-      "defaultValue": false
     }
   ],
   "hints": []
