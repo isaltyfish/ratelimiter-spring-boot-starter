@@ -21,7 +21,7 @@ Spring Cloud supports Redis rate limiter. I hope that it can also be convenientl
 <dependency>
     <groupId>net.verytools.tools</groupId>
     <artifactId>ratelimiter-spring-boot-starter</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 </dependency>
 ```
 
