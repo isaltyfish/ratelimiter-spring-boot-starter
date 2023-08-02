@@ -21,7 +21,7 @@ Spring Cloud supports Redis rate limiter. I hope that it can also be convenientl
 <dependency>
     <groupId>net.verytools.tools</groupId>
     <artifactId>ratelimiter-spring-boot-starter</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
@@ -41,14 +41,12 @@ rate-limiter.config.window=2s
 rate-limiter.config.windowTokens=1
 rate-limiter.config.burstCapacity=3
 rate-limiter.config.requestedTokens = 1
-rate-limiter.global = true
 ```
 
 * "rate-limiter.config.window" represents a time interval.
 * "rate-limiter.config.windowTokens" represents the number of tokens to be added to the token bucket every "rate-limiter.config.window" configured time interval.
 * "rate-limiter.config.burstCapacity" represents the capacity of the token bucket.
 * "rate-limiter.config.requestedTokens" represents the number of tokens consumed per request.
-* "rate-limiter.global" means whether the rate limiter for all requests should be enabled or not.
 
 So, the meaning of the above configuration is: The bucket capacity is 3, 1 token is added to the bucket every 2 second, and each request consumes one token.
 
@@ -73,21 +71,13 @@ import net.verytools.tools.interceptors.RateLimiterHandlerInterceptor;
 
 @Configuration
 public class RateLimiterConfig implements WebMvcConfigurer {
-
-    @Resource
-    RateLimiterHandlerInterceptor rateLimiterHandlerInterceptor;
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(rateLimiterHandlerInterceptor)
-                .addPathPatterns("/**");
-    }
-
+    
     @Bean
     public KeyResolver keyResolver() {
         return new KeyResolver() {
             @Override
             public String resolve(HttpServletRequest req) {
+                // note: naive implement for demo purpose only, you should use more serious method to get user's real ip
                 return req.getRemoteAddr();
             }
         };
