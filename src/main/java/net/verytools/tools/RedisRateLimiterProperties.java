@@ -46,16 +46,7 @@ public class RedisRateLimiterProperties {
         }
     }
 
-    private boolean global = false;
     private Config config;
-
-    public boolean isGlobal() {
-        return global;
-    }
-
-    public void setGlobal(boolean global) {
-        this.global = global;
-    }
 
     public Config getConfig() {
         return config;

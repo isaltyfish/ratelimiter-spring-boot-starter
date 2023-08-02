@@ -27,9 +27,9 @@ public class RateLimiterConfiguration {
     @Bean
     public RateLimiterHandlerInterceptor rateLimiterHandlerInterceptor(RedisRateLimiter redisRateLimiter,
                                                                        RedisRateLimiterProperties properties) {
-        RateLimiterHandlerInterceptor ret = new RateLimiterHandlerInterceptor(redisRateLimiter, RateLimitRuleUtil.asRateLimitRule(properties.getConfig()));
-        ret.setGlobal(properties.isGlobal());
-        return ret;
+        RedisRateLimiterProperties.Config config = properties.getConfig();
+        RateLimitRule rule = config == null ? null : RateLimitRuleUtil.asRateLimitRule(config);
+        return new RateLimiterHandlerInterceptor(redisRateLimiter, rule);
     }
 
     @ConditionalOnMissingBean(RateLimitResponseHandler.class)

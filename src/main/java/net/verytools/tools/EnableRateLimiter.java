@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Import({RateLimiterConfiguration.class})
+@Import({RateLimiterConfiguration.class, WebConfig.class})
 @Documented
 public @interface EnableRateLimiter {
 }
