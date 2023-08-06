@@ -2,6 +2,8 @@
 
 This is a redis-based rate limiter for spring boot project.
 
+中文文档请参考：[https://verytools.net/xtools-guide/posts/spring-boot-rate-limiter](https://verytools.net/xtools-guide/posts/spring-boot-rate-limiter)
+
 ## Motivation
 
 Spring Cloud supports Redis rate limiter. I hope that it can also be conveniently used in Spring Boot. Therefore, this project has ported the limiter from Spring Cloud Gateway to Spring Boot and added some encapsulation. Please refer to the features section for more details.
